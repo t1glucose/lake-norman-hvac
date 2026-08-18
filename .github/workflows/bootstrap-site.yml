@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - site-bootstrap.b64
+      - 'bootstrap/**'
   workflow_dispatch:
 
 permissions:
@@ -22,12 +22,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          base64 --decode site-bootstrap.b64 > /tmp/site.zip
+          cat bootstrap/chunk-*.b64 | base64 --decode > /tmp/site.zip
           rm -rf /tmp/site
           mkdir -p /tmp/site
           unzip -q /tmp/site.zip -d /tmp/site
           rsync -a --delete --exclude='.git/' --exclude='.github/' /tmp/site/ ./
-          rm -f site-bootstrap.b64
           rm -f .github/workflows/bootstrap-site.yml
 
           git config user.name "github-actions[bot]"
